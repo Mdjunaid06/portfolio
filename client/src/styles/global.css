@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+/* ─── Google Font ─────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ─── Root Variables ──────────────────────────────── */
+:root {
+  --accent-cyan:   #22d3ee;
+  --accent-blue:   #3b82f6;
+  --accent-indigo: #6366f1;
+  --bg-base:       #020817;
+  --bg-card:       rgba(255,255,255,0.04);
+  --border-glow:   rgba(34,211,238,0.2);
+}
+
+/* ─── Reset ───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+
+/* ─── Body — the magic background ────────────────── */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-base);
+  color: #e2e8f0;
+  overflow-x: hidden;
+  min-height: 100vh;
+
+  /* layered radial glows on top of solid dark base */
+  background-image:
+    /* top-left cyan bloom */
+    radial-gradient(ellipse 55% 40% at 5% 10%,  rgba(34,211,238,0.10) 0%, transparent 70%),
+    /* top-right blue bloom */
+    radial-gradient(ellipse 50% 35% at 95% 5%,  rgba(59,130,246,0.10) 0%, transparent 65%),
+    /* center-left soft indigo */
+    radial-gradient(ellipse 40% 40% at 0%  50%,  rgba(99,102,241,0.07) 0%, transparent 70%),
+    /* center-right cyan */
+    radial-gradient(ellipse 45% 35% at 100% 55%, rgba(34,211,238,0.08) 0%, transparent 65%),
+    /* bottom-left blue */
+    radial-gradient(ellipse 50% 35% at 10% 90%,  rgba(59,130,246,0.09) 0%, transparent 65%),
+    /* bottom-center cyan */
+    radial-gradient(ellipse 55% 30% at 55% 100%, rgba(34,211,238,0.07) 0%, transparent 60%),
+    /* subtle grid overlay */
+    linear-gradient(rgba(34,211,238,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,211,238,0.025) 1px, transparent 1px);
+
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    48px 48px,
+    48px 48px;
+}
+
+/* ─── Selection ───────────────────────────────────── */
+::selection {
+  background: rgba(34,211,238,0.25);
+  color: #fff;
+}
+
+/* ─── Scrollbar ───────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: var(--bg-base); }
+::-webkit-scrollbar-thumb  { background: rgba(34,211,238,0.35); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,0.6); }
+
+/* ─── Typography ──────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: 'Syne', sans-serif;
+}
+
+/* ─── Section Wrapper ─────────────────────────────── */
+.section-wrapper {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+}
+
+/* ─── Section Heading ─────────────────────────────── */
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-bottom: 3rem;
+}
+
+/* ─── Glass Card ──────────────────────────────────── */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(34,211,238,0.45);
+  box-shadow: 0 0 30px rgba(34,211,238,0.12), 0 8px 32px rgba(0,0,0,0.4);
+  transform: translateY(-4px);
+}
+
+/* ─── Glow Text ───────────────────────────────────── */
+.glow-text {
+  text-shadow: 0 0 20px rgba(34,211,238,0.6), 0 0 40px rgba(34,211,238,0.3);
+}
+
+/* ─── Nav link underline ──────────────────────────── */
+.nav-link {
+  position: relative;
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-cyan);
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+.nav-link:hover { color: var(--accent-cyan); }
+.nav-link:hover::after { width: 100%; }
