@@ -1,4 +1,10 @@
-const nodemailer = require("nodemailer")
+const { Resend } = require("resend")
+
+// ──────────────────────────────────────────────────────────────
+//  Uses Resend API instead of Nodemailer SMTP
+//  Works on Render free tier — no SMTP port blocking issues
+//  Get your API key from: resend.com → API Keys → Create Key
+// ──────────────────────────────────────────────────────────────
 
 const sendContactEmail = async (req, res) => {
   const { name, email, message } = req.body
@@ -8,30 +14,14 @@ const sendContactEmail = async (req, res) => {
   }
 
   try {
-    // ── Port 587 + TLS works better on most networks/firewalls
-    const transporter = nodemailer.createTransport({
-      host:   "smtp.gmail.com",
-      port:   587,
-      secure: false,        // false for port 587 (STARTTLS)
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false  // avoids cert issues on Windows
-      }
-    })
+    // ── Initialize Resend with API key from .env ──────────
+    const resend = new Resend(process.env.RESEND_API_KEY)
 
-    // ── Test connection first ─────────────────────────────
-    await transporter.verify()
-    console.log(" SMTP connected successfully")
-
-    // ── Email to your inbox ───────────────────────────────
-    await transporter.sendMail({
-      from:    `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-      to:      process.env.EMAIL_USER,
+    // ── Main email to your inbox ──────────────────────────
+    await resend.emails.send({
+      from:    "Portfolio Contact <onboarding@resend.dev>",
+      to:      "mdjunaid.200606@gmail.com",
       subject: `📬 New Portfolio Message from ${name}`,
-      text:    `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;
           background:#0f172a;border-radius:12px;overflow:hidden;border:1px solid #1e3a4a;">
@@ -82,11 +72,11 @@ const sendContactEmail = async (req, res) => {
         </div>
       `,
     })
-    console.log(" Main email sent")
+    console.log("Main email sent via Resend")
 
-    // ── Auto-reply ────────────────────────────────────────
-    await transporter.sendMail({
-      from:    `"Mohammad Junaid" <${process.env.EMAIL_USER}>`,
+    // ── Auto-reply to the person who contacted ────────────
+    await resend.emails.send({
+      from:    "Mohammad Junaid <onboarding@resend.dev>",
       to:      email,
       subject: "Thanks for reaching out! — Mohammad Junaid",
       html: `
@@ -111,17 +101,13 @@ const sendContactEmail = async (req, res) => {
         </div>
       `,
     })
-    console.log(" Auto-reply sent")
+    console.log("Auto-reply sent via Resend")
 
     res.status(200).json({ message: "Email sent successfully" })
 
   } catch (error) {
-    console.error(" Email error:", error.message)
-    console.error(" Full error:", error)
-    res.status(500).json({
-      error:  "Failed to send email",
-      detail: error.message   // visible in browser console
-    })
+    console.error("Resend error:", error.message)
+    res.status(500).json({ error: "Failed to send email", detail: error.message })
   }
 }
 
