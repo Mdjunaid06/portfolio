@@ -34,31 +34,26 @@ export const mlProjects = [
     id: 1,
 
     // ✏️ Project name shown as the card heading
-    title: "House Price Predictor",
+    title: "Movie Recommendation System",
 
     // ✏️ Short description shown on the card (2-3 sentences max)
     description:
-      "A machine learning model that predicts house prices based on features like location, size, and amenities using Linear Regression and XGBoost.",
+      "An AI-powered movie recommendation system that suggests films based on movie title, genre, actors, and director. Supports up to 10 movie inputs simultaneously for personalised batch recommendations.",
 
     // ✏️ Project screenshot/preview image
     // → Put your image in the /public/projects/ folder
-    // → Then set the path like:  image: "/projects/house-price.png"
+    // → Then set the path like:  image: "/projects/movie-recommender.png"
     // → Leave empty string ""  if you have no image yet
     image: "",
 
     // ✏️ Your GitHub repository link for this project
-    // → Example: "https://github.com/yourusername/house-price-predictor"
-    // → Set to ""  if repo is private or not available
-    github: "https://github.com",
+    github: "https://github.com/Mdjunaid06/movie-recommender",
 
-    // ✏️ Live deployed link (Vercel, Netlify, Render, etc.)
-    // → Example: "https://house-price-predictor.vercel.app"
-    // → Set to ""  if not deployed yet — button will show as disabled
-    live: "",
+    // ✏️ Live deployed link — set "" if not deployed yet
+    live: "https://movie-recommender-eight-gules.vercel.app",
 
     // ✏️ Tech stack tags shown as pills on the card
-    // → Add or remove any technology names inside the array
-    tags: ["Python", "Scikit-Learn", "Pandas", "XGBoost"],
+    tags: ["Python", "Pandas", "Scikit-Learn", "NLP", "Cosine Similarity"],
 
     // ✏️ Current status of this project — see STATUS GUIDE above
     status: "completed",
@@ -71,26 +66,26 @@ export const mlProjects = [
     id: 2,
 
     // ✏️ Project name
-    title: "Sentiment Analysis Tool",
+    title: "House Price Predictor",
 
     // ✏️ Description
     description:
-      "NLP-based sentiment classifier trained on Twitter data to detect positive, negative, and neutral sentiments using TF-IDF and Logistic Regression.",
+      "A machine learning model that predicts house prices based on features like location, size, and amenities using Linear Regression and XGBoost.",
 
-    // ✏️ Image path — see PROJECT 1 for instructions
+    // ✏️ Image path
     image: "",
 
     // ✏️ GitHub repo link
     github: "https://github.com",
 
-    // ✏️ Live link — set "" if not deployed
+    // ✏️ Live link
     live: "",
 
     // ✏️ Tech stack
-    tags: ["Python", "NLTK", "Scikit-Learn", "TF-IDF"],
+    tags: ["Python", "Scikit-Learn", "Pandas", "XGBoost"],
 
-    // ✏️ Status: "completed" | "working" | "updating"
-    status: "updating",
+    // ✏️ Status
+    status: "completed",
   },
   // ── END PROJECT 2 ──────────────────────────────────────────────
 
@@ -98,6 +93,35 @@ export const mlProjects = [
   // ── PROJECT 3 ──────────────────────────────────────────────────
   {
     id: 3,
+
+    // ✏️ Project name
+    title: "Sentiment Analysis Tool",
+
+    // ✏️ Description
+    description:
+      "NLP-based sentiment classifier trained on Twitter data to detect positive, negative, and neutral sentiments using TF-IDF and Logistic Regression.",
+
+    // ✏️ Image path
+    image: "",
+
+    // ✏️ GitHub repo link
+    github: "https://github.com",
+
+    // ✏️ Live link
+    live: "",
+
+    // ✏️ Tech stack
+    tags: ["Python", "NLTK", "Scikit-Learn", "TF-IDF"],
+
+    // ✏️ Status
+    status: "updating",
+  },
+  // ── END PROJECT 3 ──────────────────────────────────────────────
+
+
+  // ── PROJECT 4 ──────────────────────────────────────────────────
+  {
+    id: 4,
 
     // ✏️ Project name
     title: "Image Classifier (CNN)",
@@ -121,7 +145,7 @@ export const mlProjects = [
     // ✏️ Status
     status: "working",
   },
-  // ── END PROJECT 3 ──────────────────────────────────────────────
+  // ── END PROJECT 4 ──────────────────────────────────────────────
 
 
   // ── HOW TO ADD A NEW ML PROJECT ────────────────────────────────
@@ -129,11 +153,11 @@ export const mlProjects = [
   // and fill in your details. Make sure to increment the id number.
   //
   // {
-  //   id: 4,
+  //   id: 5,
   //   title: "Your Project Name",
   //   description: "What does this project do? Keep it 2-3 sentences.",
   //   image: "/projects/your-image.png",
-  //   github: "https://github.com/yourusername/your-repo",
+  //   github: "https://github.com/Mdjunaid06/your-repo",
   //   live: "https://your-project.vercel.app",
   //   tags: ["Python", "YourTech", "AnotherTech"],
   //   status: "completed",
@@ -165,7 +189,7 @@ export const mernProjects = [
     image: "",
 
     // ✏️ GitHub repo link
-    github: "https://github.com",
+    github: "https://github.com/Mdjunaid06/portfolio",
 
     // ✏️ Live link
     live: "",
@@ -246,7 +270,7 @@ export const mernProjects = [
   //   title: "Your Project Name",
   //   description: "What does this project do? Keep it 2-3 sentences.",
   //   image: "/projects/your-image.png",
-  //   github: "https://github.com/yourusername/your-repo",
+  //   github: "https://github.com/Mdjunaid06/your-repo",
   //   live: "https://your-project.vercel.app",
   //   tags: ["React", "YourTech", "AnotherTech"],
   //   status: "completed",
