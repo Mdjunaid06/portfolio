@@ -79,7 +79,7 @@ const Stats = () => {
   useEffect(() => {
     const fetchWakaTime = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/wakatime/today")
+        const res = await fetch("https://portfolio-server-87cc.onrender.com/api/wakatime/today")
         if (!res.ok) throw new Error()
         const data = await res.json()
         setTodayTime(data.timeText)
