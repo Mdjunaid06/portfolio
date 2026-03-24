@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react"
 import { FaGithub, FaStar, FaCodeBranch, FaUsers, FaClock } from "react-icons/fa"
 
-const GITHUB_USERNAME = "Mdjunaid06"
+const GITHUB_USERNAME   = "Mdjunaid06"
+const BACKEND_URL       = "https://portfolio-server-87cc.onrender.com"
 
 // ── Single stat card ───────────────────────────────────────
-const StatCard = ({ icon: Icon, iconColor, label, value, sub, index, visible }) => (
+const StatCard = ({ icon: Icon, iconColor, label, value, index, visible }) => (
   <div
     className="stat-card"
     style={{
@@ -21,13 +22,12 @@ const StatCard = ({ icon: Icon, iconColor, label, value, sub, index, visible }) 
         {value === null ? <span className="stat-shimmer" /> : value}
       </span>
       <span className="stat-label">{label}</span>
-      {sub && <span className="stat-sub">{sub}</span>}
     </div>
   </div>
 )
 
 const Stats = () => {
-  const [visible, setVisible]     = useState(false)
+  const [visible, setVisible] = useState(false)
   const ref = useRef(null)
 
   // GitHub state
@@ -36,11 +36,11 @@ const Stats = () => {
   const [ghStars,     setGhStars]     = useState(null)
   const [ghError,     setGhError]     = useState(false)
 
-  // WakaTime daily state
-  const [todayTime,  setTodayTime]  = useState(null)  // e.g. "2h 30m"
-  const [isOnline,   setIsOnline]   = useState(false)
-  const [wkError,    setWkError]    = useState(false)
-  const [lastUpdate, setLastUpdate] = useState(null)
+  // WakaTime state
+  const [todayTime,   setTodayTime]   = useState(null)
+  const [isOnline,    setIsOnline]    = useState(false)
+  const [lastUpdate,  setLastUpdate]  = useState(null)
+  const [wkAvailable, setWkAvailable] = useState(true)
 
   // Scroll reveal
   useEffect(() => {
@@ -75,24 +75,22 @@ const Stats = () => {
     fetchGitHub()
   }, [])
 
-  // Fetch WakaTime today via backend — polls every 2 minutes
+  // Fetch WakaTime — polls every 2 minutes
   useEffect(() => {
     const fetchWakaTime = async () => {
       try {
-        const res = await fetch("https://portfolio-server-87cc.onrender.com/api/wakatime/today")
+        const res = await fetch(`${BACKEND_URL}/api/wakatime/today`)
         if (!res.ok) throw new Error()
         const data = await res.json()
         setTodayTime(data.timeText)
         setIsOnline(data.isOnline)
         setLastUpdate(new Date().toLocaleTimeString())
-        setWkError(false)
+        setWkAvailable(true)
       } catch {
-        setWkError(true)
+        setWkAvailable(false)
       }
     }
-
     fetchWakaTime()
-    // Poll every 2 minutes to keep online status fresh
     const interval = setInterval(fetchWakaTime, 2 * 60 * 1000)
     return () => clearInterval(interval)
   }, [])
@@ -123,17 +121,14 @@ const Stats = () => {
           <div className="stats-panel-header">
             <FaGithub className="stats-panel-icon" />
             <h3 className="stats-panel-title">GitHub</h3>
-            <a
-              href={`https://github.com/${GITHUB_USERNAME}`}
-              target="_blank" rel="noreferrer"
-              className="stats-panel-link"
-            >
+            <a href={`https://github.com/${GITHUB_USERNAME}`}
+              target="_blank" rel="noreferrer" className="stats-panel-link">
               @{GITHUB_USERNAME}
             </a>
           </div>
 
           {ghError ? (
-            <p className="stats-error">Could not load GitHub data.</p>
+            <p className="stats-error">Unable to load GitHub data at this time.</p>
           ) : (
             <div className="stat-cards-grid">
               <StatCard icon={FaCodeBranch} iconColor="#22d3ee"
@@ -145,35 +140,29 @@ const Stats = () => {
             </div>
           )}
 
-          {/* Contribution graph */}
           <div className="embed-block" style={{
-            opacity:    visible ? 1 : 0,
-            transition: "opacity 0.8s ease 0.5s",
+            opacity: visible ? 1 : 0, transition: "opacity 0.8s ease 0.5s",
           }}>
             <p className="embed-label">Contribution Graph</p>
             <img
               src={`https://ghchart.rshah.org/22d3ee/${GITHUB_USERNAME}`}
-              alt="GitHub contributions"
-              className="contrib-img"
+              alt="GitHub contributions" className="contrib-img"
             />
           </div>
 
-          {/* GitHub stats card */}
           <div className="embed-block" style={{
-            opacity:    visible ? 1 : 0,
-            transition: "opacity 0.8s ease 0.65s",
+            opacity: visible ? 1 : 0, transition: "opacity 0.8s ease 0.65s",
           }}>
             <p className="embed-label">GitHub Stats</p>
             <img
               src={`https://github-readme-stats.vercel.app/api?username=${GITHUB_USERNAME}&show_icons=true&theme=transparent&title_color=22d3ee&icon_color=22d3ee&text_color=94a3b8&border_color=1e3a4a&count_private=true`}
-              alt="GitHub stats"
-              className="stats-embed-img"
+              alt="GitHub stats" className="stats-embed-img"
             />
           </div>
         </div>
 
         {/* ════════════════════════
-            RIGHT — Daily Active Time
+            RIGHT — Active Time
         ════════════════════════ */}
         <div className="stats-panel" style={{
           opacity:    visible ? 1 : 0,
@@ -186,16 +175,18 @@ const Stats = () => {
             <span className="stats-panel-sub">Resets daily at midnight</span>
           </div>
 
-          {wkError ? (
-            <div className="wk-offline-notice">
-              <p className="wk-offline-text">
-                Start the backend server to see live coding stats.
+          {/* ── If backend unavailable — professional message ── */}
+          {!wkAvailable ? (
+            <div className="wk-unavailable">
+              <div className="wk-unavailable-icon">📊</div>
+              <p className="wk-unavailable-title">Stats temporarily unavailable</p>
+              <p className="wk-unavailable-desc">
+                Coding activity data is currently being updated. Please check back shortly.
               </p>
-              <code className="wk-offline-code">cd server && node server.js</code>
             </div>
           ) : (
             <>
-              {/* Online / Offline status */}
+              {/* Online status */}
               <div className="online-status-card">
                 <div className={`online-dot ${isOnline ? "online-dot--on" : "online-dot--off"}`} />
                 <div className="online-status-text">
@@ -208,7 +199,7 @@ const Stats = () => {
                 </div>
               </div>
 
-              {/* Today's total time — big display */}
+              {/* Today's total time */}
               <div className="today-time-card">
                 <p className="today-time-label">Today's coding time</p>
                 <div className="today-time-value">
@@ -226,13 +217,12 @@ const Stats = () => {
             </>
           )}
 
-          {/* Top Languages on GitHub — always works */}
+          {/* Top Languages — always shows regardless of backend */}
           <div className="embed-block">
             <p className="embed-label">Top Languages on GitHub</p>
             <img
               src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${GITHUB_USERNAME}&theme=transparent&title_color=22d3ee&icon_color=22d3ee&text_color=94a3b8&border_color=1e3a4a&layout=compact&langs_count=6&hide_title=true`}
-              alt="Top languages"
-              className="stats-embed-img"
+              alt="Top languages" className="stats-embed-img"
             />
           </div>
 
@@ -249,8 +239,6 @@ const Stats = () => {
         @media (max-width: 768px) {
           .stats-layout { grid-template-columns: 1fr; }
         }
-
-        /* Panel */
         .stats-panel {
           background: rgba(255,255,255,0.03);
           border: 1px solid rgba(34,211,238,0.12);
@@ -275,7 +263,6 @@ const Stats = () => {
         .stats-panel-link:hover { opacity: 1; }
         .stats-panel-sub { margin-left: auto; font-size: 0.65rem; color: #475569; }
 
-        /* Stat cards */
         .stat-cards-grid {
           display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;
         }
@@ -306,15 +293,10 @@ const Stats = () => {
           font-size: 0.62rem; font-weight: 600; color: #64748b;
           text-transform: uppercase; letter-spacing: 0.05em;
         }
-        .stat-sub { font-size: 0.58rem; color: #475569; }
-
-        /* Shimmer */
         .stat-shimmer {
-          display: inline-block; width: 40px; height: 16px;
-          border-radius: 4px;
+          display: inline-block; border-radius: 4px;
           background: linear-gradient(90deg,
-            rgba(255,255,255,0.05) 0%,
-            rgba(255,255,255,0.1) 50%,
+            rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 50%,
             rgba(255,255,255,0.05) 100%);
           background-size: 200% 100%;
           animation: shimmer 1.4s ease infinite;
@@ -323,8 +305,6 @@ const Stats = () => {
           0%   { background-position: -200% 0; }
           100% { background-position:  200% 0; }
         }
-
-        /* Embeds */
         .embed-block { display: flex; flex-direction: column; gap: 0.45rem; }
         .embed-label {
           font-size: 0.68rem; font-weight: 700; color: #475569;
@@ -336,13 +316,10 @@ const Stats = () => {
         }
         .stats-embed-img { width: 100%; border-radius: 0.5rem; opacity: 0.92; }
 
-        /* ── Online status card ── */
+        /* Online status */
         .online-status-card {
-          display: flex;
-          align-items: center;
-          gap: 0.85rem;
-          padding: 0.85rem 1rem;
-          border-radius: 0.75rem;
+          display: flex; align-items: center; gap: 0.85rem;
+          padding: 0.85rem 1rem; border-radius: 0.75rem;
           background: rgba(255,255,255,0.03);
           border: 1px solid rgba(34,211,238,0.1);
         }
@@ -355,77 +332,61 @@ const Stats = () => {
           box-shadow: 0 0 8px rgba(74,222,128,0.6);
           animation: onlinePulse 2s ease-in-out infinite;
         }
-        .online-dot--off {
-          background: #475569;
-        }
+        .online-dot--off { background: #475569; }
         @keyframes onlinePulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50%       { opacity: 0.5; transform: scale(1.3); }
         }
-        .online-status-text {
-          display: flex; flex-direction: column; gap: 0.1rem;
-        }
-        .online-label {
-          font-size: 0.85rem; font-weight: 700;
-        }
+        .online-status-text { display: flex; flex-direction: column; gap: 0.1rem; }
+        .online-label { font-size: 0.85rem; font-weight: 700; }
         .online-label--on  { color: #4ade80; }
         .online-label--off { color: #64748b; }
-        .online-updated {
-          font-size: 0.65rem; color: #334155;
-        }
+        .online-updated { font-size: 0.65rem; color: #334155; }
 
-        /* ── Today's time big display ── */
+        /* Today's time */
         .today-time-card {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.4rem;
-          padding: 1.5rem;
+          display: flex; flex-direction: column;
+          align-items: center; gap: 0.4rem; padding: 1.5rem;
           border-radius: 0.75rem;
           background: rgba(34,211,238,0.04);
-          border: 1px solid rgba(34,211,238,0.12);
-          text-align: center;
+          border: 1px solid rgba(34,211,238,0.12); text-align: center;
         }
         .today-time-label {
           font-size: 0.72rem; font-weight: 700; color: #64748b;
           text-transform: uppercase; letter-spacing: 0.07em;
         }
         .today-time-value {
-          font-family: 'Syne', sans-serif;
-          font-size: 3rem; font-weight: 800;
+          font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800;
           background: linear-gradient(90deg, #22d3ee, #3b82f6);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          line-height: 1;
-          min-height: 3.5rem;
-          display: flex; align-items: center;
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text; line-height: 1;
+          min-height: 3.5rem; display: flex; align-items: center;
         }
-        .today-time-sub {
-          font-size: 0.72rem; color: #475569;
-        }
+        .today-time-sub { font-size: 0.72rem; color: #475569; }
 
-        /* ── Offline notice ── */
-        .wk-offline-notice {
-          display: flex; flex-direction: column; gap: 0.6rem;
-          padding: 1rem; border-radius: 0.75rem;
+        /* ── Professional unavailable notice ── */
+        .wk-unavailable {
+          display: flex; flex-direction: column;
+          align-items: center; gap: 0.6rem;
+          padding: 1.75rem 1rem; text-align: center;
+          border-radius: 0.75rem;
           background: rgba(255,255,255,0.02);
-          border: 1px solid rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.05);
         }
-        .wk-offline-text { font-size: 0.8rem; color: #64748b; }
-        .wk-offline-code {
-          font-size: 0.72rem; color: #22d3ee;
-          background: rgba(34,211,238,0.08);
-          padding: 0.35rem 0.65rem; border-radius: 0.35rem;
-          font-family: monospace;
+        .wk-unavailable-icon { font-size: 2rem; }
+        .wk-unavailable-title {
+          font-family: 'Syne', sans-serif;
+          font-size: 0.95rem; font-weight: 700; color: #94a3b8;
+        }
+        .wk-unavailable-desc {
+          font-size: 0.78rem; color: #475569; line-height: 1.65; max-width: 260px;
         }
 
-        /* Error */
         .stats-error {
-          font-size: 0.78rem; color: #ef4444;
+          font-size: 0.78rem; color: #94a3b8;
           padding: 0.65rem 0.85rem;
-          background: rgba(239,68,68,0.07);
-          border: 1px solid rgba(239,68,68,0.18);
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.06);
           border-radius: 0.5rem;
         }
       `}</style>
