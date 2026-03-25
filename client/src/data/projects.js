@@ -44,7 +44,7 @@ export const mlProjects = [
     // → Put your image in the /public/projects/ folder
     // → Then set the path like:  image: "/projects/movie-recommender.png"
     // → Leave empty string ""  if you have no image yet
-    image: "",
+    image: "/projects/movie.png",
 
     // ✏️ Your GitHub repository link for this project
     github: "https://github.com/Mdjunaid06/movie-recommender",
